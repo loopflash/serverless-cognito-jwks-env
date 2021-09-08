@@ -1,6 +1,6 @@
 {
   "name": "serverless-cognito-jwks-env",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "./cognito-jwt.js",
   "license": "MIT",
   "files": [
