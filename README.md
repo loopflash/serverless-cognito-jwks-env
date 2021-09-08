@@ -31,11 +31,11 @@ This method only works after **deploy**
 
 ```yaml
 custom:
-	cognito_jwks_env:
-		- id: 'id_cognito' # If id is declared, 'name' will be discarted
-		  name: 'cognito_name' # Name of cognito
-		  env: 'COGNITO_JKWS' # Env name in Lambda
-		  functions:
-			- 'name_function1' # Name of the lambda to insert the environment variable
-			- 'name_function2'
+    cognito_jwks_env:
+        - id: 'id_cognito' # If id is declared, 'name' will be discarted
+          name: 'cognito_name' # Name of cognito
+          env: 'COGNITO_JKWS' # Env name in Lambda
+          functions:
+            - 'name_function1' # Name of the lambda to insert the environment variable
+            - 'name_function2'
 ```
