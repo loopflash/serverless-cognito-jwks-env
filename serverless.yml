@@ -1,0 +1,95 @@
+service: iot-rimac-rp
+frameworkVersion: '2'
+
+custom:
+  name: IOTR-FACTORIES
+  nomProject: IOTRFAC
+  stageDeploy: ${opt:stage, 'DESA'}
+  regions:
+    code:
+      DESA: us-east-1
+      TEST: us-east-1
+      PROD: us-east-1
+    abrev:
+      DESA: UE1
+      TEST: UE1
+      PROD: UE1
+  cloud_nom:
+    DESA: DEVL
+    TEST: TEST
+    PROD: PROD
+  environments:
+    DESA: 'desa'
+    TEST: 'test'
+    PROD: 'prod'
+  account:
+    DESA: 'DEVL'
+    TEST: 'TEST'
+    PROD: 'PROD'
+  prefix: ${self:custom.regions.abrev.${self:custom.stageDeploy}}${self:custom.cloud_nom.${self:custom.stageDeploy}}
+  serverless-offline:
+    httpPort: 4010
+    websocketPort: 4011
+    lambdaPort: 4012
+  # Prefix services
+  proyectNameAbrev: 'IOTR'
+  groupDatabase: 'DBA'
+  serviceDatabase: 'DDB'
+  resourceDatabase: 'STD'
+  cognito_jwks_env:
+    - name: ${self:custom.prefix}SEGCGNUSP${self:custom.nomProject}002
+      functions:
+        - ${self:custom.resourceDatabase}001
+        - ${self:custom.resourceDatabase}002
+  # Account ID
+  accounts:
+    DESA: ''
+    TEST: '826477486298'
+    PROD: ''
+  # VPC config
+  vpcConfig:
+    DESA:
+      securityGroupIds: ''
+      subnetIds: ''
+    TEST:
+      securityGroupIds:
+        - sg-054b19d436cc965f6
+      subnetIds:
+        - subnet-0b2716741779de8b4
+    PROD:
+      securityGroupIds: ''
+      subnetIds: ''
+
+  # Database connection
+
+package:
+  excludeDevDependencies: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'DESA'}
+  region: ${self:custom.regions.code.${self:custom.stageDeploy}}
+  environment:
+    COGNITO_POOL_ID_LOGIN: !Ref CognitoPoolLogin
+    REGION: ${self:provider.region}
+  logs:
+    websocket:
+      level: ERROR
+plugins:
+  - ./cognito-jwt
+resources:
+  Resources:
+    CognitoPoolLogin:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:custom.prefix}SEGCGNUSP${self:custom.nomProject}002
+
+functions:
+  productAPI:
+    handler: handler.handler
+    name: ${self:custom.resourceDatabase}001
+  
+  productACI:
+    handler: handler.handler
+    name: ${self:custom.resourceDatabase}002
